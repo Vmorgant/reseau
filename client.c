@@ -11,7 +11,9 @@
 #define MAX_MSG 100
 
 int main(int argc, char *argv[]){
-
+        
+        char * word;
+        FILE * file;
 	int sd,rc,i;
 	struct sockaddr_in localAddr,servAddr;
 	struct hostent *h;
@@ -47,7 +49,6 @@ int main(int argc, char *argv[]){
 		exit(1);
 	}
 	
-	
 	/*Connect to server*/
 	
 	rc=connect(sd,(struct sockaddr *) &servAddr,sizeof(servAddr));
@@ -57,13 +58,17 @@ int main(int argc, char *argv[]){
 	}
 	
 	for(i=2;i<argc;i++){
-		rc=send( sd,argv[i],strlen(argv[i]) + 1, 0);
-		if(rc<0){
+                file=fopen("*(argv[i])","r");
+                while(!feof(file)){
+                    fscanf(file,"%s",word);
+                    rc=send( sd,word,strlen(word) + 1, 0);
+                    if(rc<0){
 			perror("cannot send data");
 			close(sd);
 			exit(1);
-		}
-		printf("%s : data%u sent (%s) \n",argv[0],i-1,argv[i]);
+                    }
+                }
+                printf("%s : data%u sent (%s) \n",argv[0],i-1,argv[i]);
 	}
 	close(sd);
 	return(0);
