@@ -19,10 +19,10 @@ int read_line();
 
 int main (int argc, char * argv[]){
 
-	int sd, newSd,cliLen;
+	int sd, newSd,cliLen,n;
 	struct sockaddr_in cliAddr, servAddr;
 	char line[MAX_MSG];
-
+        void * rcvmsg;
 	sd = socket(AF_INET, SOCK_STREAM, 0);
 	if (sd<0){
 		perror("cannot open socket");
@@ -48,8 +48,12 @@ int main (int argc, char * argv[]){
 			perror("cannot accept connection");
 			return ERROR;
 		}
-
-		memset(line,0x0,MAX_MSG);/*init buffer*/
+		/*init line*/
+		memset(line,0x0,MAX_MSG);
+            
+                /*receive segments*/
+                
+		memset(rcvmsg,0x0,MAX_MSG);/*init buffer*/
 		n=recv(newSd,rcvmsg,MAX_MSG,0);/*Wait for data*/
                 printf("%s : received from %s:TCP%d : %s\n",argv[0],inet_ntoa(cliAddr.sin_addr),ntohs(cliAddr.sin_port),line);
                 /*init line*/

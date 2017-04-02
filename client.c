@@ -12,13 +12,13 @@
 
 int main(int argc, char *argv[]){
         
-        char * word;
+        char chr;
         FILE * file;
 	int sd,rc,i;
 	struct sockaddr_in localAddr,servAddr;
 	struct hostent *h;
 	if(argc <3){
-		printf("%s <server> <data1> <data2>... <datan>\n",argv[0]);
+		printf("%s <server> <file>\n",argv[0]);
 		exit(1);
 	}
 	h=gethostbyname(argv[1]);
@@ -57,19 +57,18 @@ int main(int argc, char *argv[]){
 		exit(1);
 	}
 	
-	for(i=2;i<argc;i++){
-                file=fopen("*(argv[i])","r");
-                while(!feof(file)){
-                    fscanf(file,"%s",word);
-                    rc=send( sd,word,strlen(word) + 1, 0);
-                    if(rc<0){
-			perror("cannot send data");
-			close(sd);
-			exit(1);
-                    }
+        file=fopen(argv[2],"r");
+        while(!feof(file)){
+                fscanf(file,"%c",&chr);
+                rc=send( sd,&chr,sizeof(char) + 1, 0);
+                if(rc<0){
+                    perror("cannot send data");
+                    close(sd);
+                    exit(1);
                 }
-                printf("%s : data%u sent (%s) \n",argv[0],i-1,argv[i]);
+        
 	}
+	printf("%s : data%u sent (%s) \n",argv[0],2,argv[2]);
 	fclose(file);
 	close(sd);
 	return(0);
