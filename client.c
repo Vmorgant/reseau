@@ -70,6 +70,7 @@ int main(int argc, char *argv[]){
                 }
                 printf("%s : data%u sent (%s) \n",argv[0],i-1,argv[i]);
 	}
+	fclose(file);
 	close(sd);
 	return(0);
 }

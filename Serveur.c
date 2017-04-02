@@ -49,61 +49,14 @@ int main (int argc, char * argv[]){
 			return ERROR;
 		}
 
-		memset(line,0x0,MAX_MSG);
-		while(read_line(newSd,line) !=ERROR) { 
-			printf("%s: received from %s:TCP%d : %s\n",argv[0], inet_ntoa(cliAddr.sin_addr), ntohs(cliAddr.sin_port), line);
-			memset(line,0x0,MAX_MSG);
-		}
+		memset(line,0x0,MAX_MSG);/*init buffer*/
+		n=recv(newSd,rcvmsg,MAX_MSG,0);/*Wait for data*/
+                printf("%s : received from %s:TCP%d : %s\n",argv[0],inet_ntoa(cliAddr.sin_addr),ntohs(cliAddr.sin_port),line);
+                /*init line*/
+                memset(line,0x0,MAX_MSG);
 	}
 
 }
-
-int read_line(int newSd, char *line_to_return){
-	static int rcv_ptr=0;
-	static char rcv_msg[MAX_MSG];
-	static int n;
-	int offset = 0;
-
-	while(1){
-		if (rcv_ptr==0){
-			memset(rcv_msg,0x0,MAX_MSG);
-			n=recv(newSd, rcv_msg, MAX_MSG, 0);
-			if (n<0){
-				perror("cannot receive data");
-				return ERROR;
-			}
-			else if (n==0){
-				printf("connection closed by client\n");
-				close(newSd);
-				return ERROR;
-			}
-		}
-
-		while(*(rcv_msg+rcv_ptr)!=END_LINE && rcv_ptr<n){
-			memcpy(line_to_return+offset,rcv_msg+rcv_ptr,1);
-			offset++;
-			rcv_ptr++;
-		}
-		
-		if(rcv_ptr==n-1){
-			rcv_ptr=0;
-			return ++offset;
-		}
-
-		if(rcv_ptr<n-1){
-			rcv_ptr++;
-			return ++offset;
-		}
-
-		if(rcv_ptr==n){
-			rcv_ptr = 0;
-			
-		}
-
-	}
-}
-
-
 
 
 
